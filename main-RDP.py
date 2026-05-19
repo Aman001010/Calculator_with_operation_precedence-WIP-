@@ -26,6 +26,7 @@ def tokenization(token_text):
             raise ValueError(("Wrong input"))
     return tokens
 
+
 def factor():
 #basically run through a loop to check if current token is a number if yes then return that if bracket then the next token is a number so just call expression to calculate it
     
