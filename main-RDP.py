@@ -1,14 +1,23 @@
-""" for 12+10:
-expr 0 token numbers 12
-factor 0 token numbers 12
-factor 2 token numbers 10
-output 22.0
+""" for Enter an operation 12+7*4
+expr  0  token:  ('NUMBERS', 12.0)
+factor  0  token:  ('NUMBERS', 12.0)
+factor  2  token:  ('NUMBERS', 7.0)
+Output:  19.0
+tokenization:  [('NUMBERS', 12.0), ('OP', '+'), ('NUMBERS', 7.0), ('OP', '*'), ('NUMBERS', 4.0)]
 
-for 123*4+7-(23+4):
-expr 0 token numbers 123
-factor 0 token numbers 123
-term 1 token op *
-output none
+for Enter an operation 123*4+7-(23+4)
+expr  0  token:  ('NUMBERS', 123.0)
+factor  0  token:  ('NUMBERS', 123.0)
+term  1  token:  ('OP', '*')
+factor  0  token:  ('NUMBERS', 123.0)
+pos  2  temp1  123.0
+factor  2  token:  ('NUMBERS', 4.0)
+expr  4  token:  ('NUMBERS', 7.0)
+factor  4  token:  ('NUMBERS', 7.0)
+factor  7  token:  ('NUMBERS', 23.0)
+Output:  None
+tokenization:  [('NUMBERS', 123.0), ('OP', '*'), ('NUMBERS', 4.0), ('OP', '+'), ('NUMBERS', 7.0), ('OP', '-'),
+ ('BR_OPEN', '('), ('NUMBERS', 23.0), ('OP', '+'), ('NUMBERS', 4.0), ('BR_CLOSE', ')')]
 
 debug/solve tomm ahead
 """
@@ -42,81 +51,69 @@ def tokenization(token_text):
 
 
 def factor():
-#basically run through a loop to check if current token is a number if yes then return that if bracket then the next token is a number so just call expression to calculate it
+#basically run through a loop to check if current token is a number if yes then return that 
+# if bracket then the next token is a number so just call expression to calculate it
     global position
+    global tempvar
     print("factor ",position," token: ",tokens_value[position])
     
     if(tokens_value[position][0]=="NUMBERS"):
-        position+=1
-        return tokens_value[position-1][1]   
+        #tempvar=tokens_value[position][1]
+        
+        return tokens_value[position][1]   
     if(tokens_value[position][0]=="BR_OPEN"): #changing position-1 to position since we are checking for the current token not the previous one
         position+=1
-        return term()
+        return expr()
     
 
 def term():
     global position
     print("term ",position," token: ",tokens_value[position])
 
-    if(tokens_value[position][0]=="NUMBERS"):
-        temp1=factor()
-        if(tokens_value[position][0]=="OP"):
-            if(tokens_value[position][1]=='*'):
-                position+=1
-                if(tokens_value[position][0]=="NUMBERS"):
-                    temp2=factor()
-                    temp1*=temp2
-                    return temp1
-                else:
-                    print("invalid operation")
-            elif(tokens_value[position][1]=='/'):
-                position+=1
-                if(tokens_value[position][0]=="NUMBERS"):
-                    temp2=factor() 
-                    temp1/=temp2
-                
-                    return temp1 
-            elif(tokens_value[position][1]=='+' or tokens_value[position][1]=='-'):
-                position -=1
-                return expr()
-        elif(tokens_value[position][0]=="BR_OPEN"):
+    
+    total=factor()
+    position+=1
+    
+    while position<len(tokens_value)-1 and (tokens_value[position][1]=="*" or tokens_value[position][1]=="/"):
+        if tokens_value[position][1]== '*':
             position+=1
-        return expr()
+            temp1=factor()
+            total*=temp1
+            return total 
+        elif tokens_value[position][1]== '/':
+            position+=1
+            temp1=factor()
+            total/=temp1
+            return total
+
+
+    
 
 
 def expr():
     global position
     print("expr ",position," token: ",tokens_value[position])
-
-    if(tokens_value[position][0]=="BR_OPEN"):
-        position+=1
-        return expr()
-    if(tokens_value[position][0]=="NUMBERS"):
-        temp1=factor()
     
-        if(tokens_value[position][0]=="OP"):
-            if(tokens_value[position][1]=='+'):
-                position+=1
-                if(tokens_value[position][0]=="NUMBERS"):
-                    temp2=factor()
-                    temp1+=temp2
-                    return temp1
-                else:
-                    print("invalid operation")
-            elif(tokens_value[position][1]=='-'):
-                position+=1
-                if(tokens_value[position][0]=="NUMBERS"):
-                    temp2=factor()
-                    temp1-=temp2
-                
-                    return temp1 
-            else:
-                return term()
-
+    total =0
+    total = term()
+     
+    print("expr ",position," token: ",tokens_value[position])
+    while position < len(tokens_value)-1 and (tokens_value[position][1]== '+' or tokens_value[position][1]=='-'):
+        if tokens_value[position][1]== '+':
+            position+=1
+            temp1=term()
+            total+=temp1
+            return total
+        elif tokens_value[position][1]== '-':
+            position+=1
+            temp1=term()
+            total-=temp1
+            return total
+    
   
         
     
-
+tempvar=0
 position=0
 s=input("Enter an operation ")
 tokens_value=tokenization(s)        
