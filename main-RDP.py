@@ -1,26 +1,4 @@
-""" for Enter an operation 12+7*4
-expr  0  token:  ('NUMBERS', 12.0)
-factor  0  token:  ('NUMBERS', 12.0)
-factor  2  token:  ('NUMBERS', 7.0)
-Output:  19.0
-tokenization:  [('NUMBERS', 12.0), ('OP', '+'), ('NUMBERS', 7.0), ('OP', '*'), ('NUMBERS', 4.0)]
 
-for Enter an operation 123*4+7-(23+4)
-expr  0  token:  ('NUMBERS', 123.0)
-factor  0  token:  ('NUMBERS', 123.0)
-term  1  token:  ('OP', '*')
-factor  0  token:  ('NUMBERS', 123.0)
-pos  2  temp1  123.0
-factor  2  token:  ('NUMBERS', 4.0)
-expr  4  token:  ('NUMBERS', 7.0)
-factor  4  token:  ('NUMBERS', 7.0)
-factor  7  token:  ('NUMBERS', 23.0)
-Output:  None
-tokenization:  [('NUMBERS', 123.0), ('OP', '*'), ('NUMBERS', 4.0), ('OP', '+'), ('NUMBERS', 7.0), ('OP', '-'),
- ('BR_OPEN', '('), ('NUMBERS', 23.0), ('OP', '+'), ('NUMBERS', 4.0), ('BR_CLOSE', ')')]
-
-debug/solve tomm ahead
-"""
 def tokenization(token_text):
     tokens=[]
     i=0
@@ -78,14 +56,15 @@ def term():
         if tokens_value[position][1]== '*':
             position+=1
             temp1=factor()
-            total*=temp1
-            return total 
+            total*=temp1 # type: ignore
+            position+=1
+            
         elif tokens_value[position][1]== '/':
             position+=1
             temp1=factor()
-            total/=temp1
-            return total
-
+            total/=temp1 # pyright: ignore[reportOperatorIssue]
+            position+=1
+    return total
 
     
 
@@ -102,14 +81,15 @@ def expr():
         if tokens_value[position][1]== '+':
             position+=1
             temp1=term()
-            total+=temp1
-            return total
+            total+=temp1 # type: ignore
+            
         elif tokens_value[position][1]== '-':
             position+=1
             temp1=term()
-            total-=temp1
-            return total
+            total-=temp1 # type: ignore
+            
     
+        
   
         
     
