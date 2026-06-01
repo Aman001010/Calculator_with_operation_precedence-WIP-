@@ -32,7 +32,7 @@ def factor():
 #basically run through a loop to check if current token is a number if yes then return that 
 # if bracket then the next token is a number so just call expression to calculate it
     global position
-    global tempvar
+    
     print("factor ",position," token: ",tokens_value[position])
     
     if(tokens_value[position][0]=="NUMBERS"):
@@ -87,7 +87,7 @@ def expr():
             position+=1
             temp1=term()
             total-=temp1 # type: ignore
-            
+    return total        
     
         
   
