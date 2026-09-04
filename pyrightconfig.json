@@ -1,3 +1,4 @@
 {
-  "ignore": ["main-RDP.py"]
+  "include": ["main-RDP.py", "test_main.py"],
+  "typeCheckingMode": "strict"
 }
